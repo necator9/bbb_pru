@@ -41,29 +41,30 @@ int main(int argc, char *argv[])
     printf ("Using /dev/mem.\n");
 
     prusharedMem_32int_ptr = pru + PRU_SHAREDMEM/4 + 0x200/4; // Points to start of shared memory
+    
     if (argc == 2) {
-    if (!strcmp(argv[1], "on")) {
-        prusharedMem_32int_ptr[0] = BLINKING_ON;
-	printf("Starting the LED\n");
-    }
-    else if (!strcmp(argv[1], "off")) {
-        prusharedMem_32int_ptr[0] = BLINKING_OFF;
-	printf("Stopping the LED\n");
-    }
-    else if (!strcmp(argv[1], "status")) {
-	if (prusharedMem_32int_ptr[1] == ON_STATUS) {
-            printf("The LED is blinking: %x\n", prusharedMem_32int_ptr[1]);
-	}
-	else if (prusharedMem_32int_ptr[1] == OFF_STATUS) {
-            printf("The LED is NOT blinking: %x\n", prusharedMem_32int_ptr[1]);
-	}
-	else {
-	    printf("The status is unknown");
-	}
-    }	
-    else {
-    	printf("The argument not recognized\n");
-    }
+        if (!strcmp(argv[1], "on")) {
+            prusharedMem_32int_ptr[0] = BLINKING_ON;
+            printf("Starting the LED\n");
+        }
+        else if (!strcmp(argv[1], "off")) {
+            prusharedMem_32int_ptr[0] = BLINKING_OFF;
+            printf("Stopping the LED\n");
+        }
+        else if (!strcmp(argv[1], "status")) {
+            if (prusharedMem_32int_ptr[1] == ON_STATUS) {
+                printf("The LED is blinking: %x\n", prusharedMem_32int_ptr[1]);
+            }
+            else if (prusharedMem_32int_ptr[1] == OFF_STATUS) {
+                printf("The LED is NOT blinking: %x\n", prusharedMem_32int_ptr[1]);
+            }
+            else {
+                printf("The status is unknown");
+            }
+        }	
+        else {
+            printf("The argument not recognized\n");
+        }
     }
 
     if(munmap(pru, PRU_LEN)) {
