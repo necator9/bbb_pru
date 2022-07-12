@@ -6,7 +6,9 @@
 
 #include <stdio.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <sys/mman.h>
+#include <time.h>
 
 
 #define PRU_ADDR        0x4A300000      // Start of PRU memory Page 184 am335x TRM
@@ -42,13 +44,36 @@ int main(int argc, char *argv[])
 
     prusharedMem_32int_ptr = pru + PRU_SHAREDMEM/4 + 0x200/4; // Points to start of shared memory
     
-    int s = 1000;
-    unsigned int result[s];
+    int n_it = 10;
 
-    for (int i = 0; i < s; i++) {
-        result[s] = prusharedMem_32int_ptr[0];
-        printf("%x\n", result[s]);
+    unsigned int result[n_it];
+    result[0] = 0;
+    int k = 1;
+
+    clock_t t_result[n_it];
+
+    
+    while (k < n_it) {
+        unsigned int level = prusharedMem_32int_ptr[0];
+        if (level != result[k - 1]) {
+            result[k] = level;
+            t_result[k] = clock(); 
+            k++;
+        }
+        // sleep(5);
     }
+
+    printf("%d changes happened\n", k);
+
+    for (int i = 1; i < n_it; i++) {
+        // long double period = t_result[i] - t_result[i - 1];
+        // long double freq = 1 / period / CLOCKS_PER_SEC * 1000000;
+        // printf("lvl - %x; time - %ld; period - %Lf; freq - %Lf\n" , result[i], t_result[i], period, freq);
+        double diff = (double) t_result[i] - t_result[i - 1];
+        printf("lvl - %x; time - %ld; diff - %f\n" , result[i], t_result[i], diff);
+    }
+
+    printf("%ld\n", CLOCKS_PER_SEC);
 
     if(munmap(pru, PRU_LEN)) {
         printf("munmap failed\n");
@@ -56,3 +81,4 @@ int main(int argc, char *argv[])
         printf("munmap succeeded\n");
     }
 }
+

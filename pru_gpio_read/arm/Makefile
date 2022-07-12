@@ -1,15 +1,28 @@
+TARGET = prog
+LIBS = -lm
 CC = gcc
+CFLAGS = -g -Wall
 
-CFLAGS  = -g -Wall
-TARGET = read_gpio
+.PHONY: default all clean
 
-all: $(TARGET)
+default: $(TARGET)
+all: default
 
-$(TARGET): $(TARGET).c
-	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
+OBJECTS = $(patsubst %.c, %.o, $(wildcard *.c))
+HEADERS = $(wildcard *.h)
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.PRECIOUS: $(TARGET) $(OBJECTS)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
 
 clean:
-	$(RM) $(TARGET)	
+	-rm -f *.o
+	-rm -f $(TARGET)
 
 run: $(TARGET)
 	./$(TARGET)
+
