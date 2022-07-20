@@ -3,7 +3,7 @@
 # Without an emmc overlay only booting from SD card is possible.
 # Pin configuration can be checked via https://github.com/mvduin/bbb-pin-utils
 
-export TARGET=gpio_in.pru1
+export TARGET=ov7670.pru1
 echo TARGET=$TARGET
 
 pins_in="P8_41 P8_45 P8_42 P8_39 P8_40 P8_27 P8_29 P8_28 P8_30 P8_21" 
