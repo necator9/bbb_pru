@@ -59,13 +59,18 @@ static int ov7670_reset(const int gpio_n)
 	path[sizeof(path) - 1] = '\0';
 	val[sizeof(val) - 1] = '\0';
 
-	snprintf(path, sizeof(path) - 1, "%s/export", sysfs_dir);
-	snprintf(val, sizeof(val) - 1, "%d", gpio_n);
-	st = echo(path, val);
-
+	snprintf(path, sizeof(path) - 1, "%s/gpio%d", sysfs_dir, gpio_n);
+	if (access(path, F_OK) != 0) {
+		snprintf(path, sizeof(path) - 1, "%s/export", sysfs_dir);
+		snprintf(val, sizeof(val) - 1, "%d", gpio_n);
+		st = echo(path, val);
+		if (st)
+			return st;
+	}
+	
 	snprintf(path, sizeof(path) - 1, "%s/gpio%d/direction",
 			sysfs_dir, gpio_n);
-			
+
 	st = echo(path, "out");
 	if (st)
 		return st;
