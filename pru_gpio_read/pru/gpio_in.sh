@@ -8,8 +8,8 @@ machine=$(awk '{print $NF}' /proc/device-tree/model)
 echo -n $machine
 if [ $machine = "Black" ]; then
     echo " Found"
-    pins_in="P9_31 P9_30"
-    pins_out="P9_29"
+    pins_in="P9_31 P9_30 P9_29"
+    pins_out=""
 else
     echo " Not Found"
     pins_in=""

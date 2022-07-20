@@ -18,23 +18,54 @@ unsigned int BLINKING_OFF = 0x1213;
 unsigned int ON_STATUS = 0xdeefdeef;
 unsigned int OFF_STATUS = 0xbeebbeeb;
 
-int main(void){
-  //CT_CFG.SYSCFG_bit.STANDBY_INIT = 0;
-  while(1) {
-    if (__R31 & P9_30) {
-      __R30 |= P9_29; /* set first bit in register 30 */
-      //__delay_cycles(CYCLES_PER_SECOND / 4); /* wait 0.5 seconds */
-    }
-    else {
-      __R30 &= ~P9_29; /* set first bit in register 30 */
-      shared_0[0] = __R31 & P9_30;
 
-     // __delay_cycles(CYCLES_PER_SECOND / 4); /* wait 0.5 seconds */
-    }
-    shared_0[0] = __R31 & P9_30; 
-    //shared_0[0] = __R30 & P9_30;
-    // shared_0[0] = 0x00000007;
+// void blink_led() {
+//   __R30 |= P9_29;  // Switch on LED
+//   __delay_cycles(CYCLES_PER_SECOND / 4);
+//   __R30 &= ~P9_29; // Switch off LED
+// }
 
+int main(void) {
+  CT_CFG.SYSCFG_bit.STANDBY_INIT = 0;
+  // __R30 &= ~P9_29; // Switch off LED
+  unsigned int prev_lvl = 0;
+  int n_it = 50;
+  shared_0[0] = 0;
+  int k = 1;
+  unsigned int cycles = 1;
+  unsigned int prev_clock = 0;
+  unsigned int lvl;
+  while(k < n_it) {
+      unsigned int lvl = __R31 & P9_30;
+      shared_0[k] = __R31;
+      k++;
+    //   if (lvl != prev_lvl) {
+    //       shared_0[k] = lvl;
+          // shared_0[k] = cycles - prev_clock;
+          // prev_clock = cycles;
+    //       prev_lvl = lvl;
+    //       k++;
+    //   }
+      // else {
+      //   cycles++;
+      // }
   }
+  // shared_0[k] = cycles;
+  // blink_led();
+  // __R30 |= P9_29;
 }
 
+
+// if (__R31 & P9_30) {
+    //   __R30 |= P9_29; /* set first bit in register 30 */
+    //   //__delay_cycles(CYCLES_PER_SECOND / 4); /* wait 0.5 seconds */
+    // }
+    // else {
+    //   __R30 &= ~P9_29; /* set first bit in register 30 */
+    //   shared_0[0] = __R31 & P9_30;
+
+    //  // __delay_cycles(CYCLES_PER_SECOND / 4); /* wait 0.5 seconds */
+    // }
+    // shared_0[0] = __R31 & P9_30; 
+    //shared_0[0] = __R30 & P9_30;
+    // shared_0[0] = 0x00000007;
