@@ -6,10 +6,11 @@
 export TARGET=ov7670.pru1
 echo TARGET=$TARGET
 
-pins_in="P8_41 P8_45 P8_42 P8_39 P8_40 P8_27 P8_29 P8_28 P8_30 P8_21" 
-pins_out="P8_20 P8_46 P8_43 P8_44"
+pins_in="P8_45 P8_42 P8_39 P8_40 P8_27 P8_29 P8_28 P8_30 P8_21" 
+pins_out="P8_20 P8_46 P8_43 P8_41"
 pins_i2c="P9_19 P9_20"
 pins_pwm="P8_34"
+gpio="P8_44"
 
 
 function config_pin {
@@ -26,3 +27,4 @@ config_pin "$pins_in" pruin
 config_pin "$pins_out" pruout
 config_pin "$pins_i2c" i2c
 config_pin "$pins_pwm" pwm
+config_pin "$gpio" gpio
