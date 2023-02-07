@@ -1,0 +1,33 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+    {
+        "label": "Copy Local to Remote",
+        "type": "shell",
+        "command": "robocopy",
+        "args": [
+            "${workspaceFolder}",
+            "root@192.168.1.199",
+        ],
+        "group": {
+            "kind": "build",
+            "isDefault": true
+        }
+    },
+    {
+        "label": "Build via Makefile",
+        "type": "shell",
+        "command": "ssh",
+        "args": [
+          "root@192.168.1.199",
+          "cd /root/bbb_pru/rpmsg/pru/; source configure.sh; make"
+        ],
+        "dependsOn": ["Copy Local to Remote"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+    }
+    ]
+  }
+  
