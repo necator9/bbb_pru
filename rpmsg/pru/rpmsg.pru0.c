@@ -64,16 +64,6 @@ int main(void) {
     status = &resourceTable.rpmsg_vdev.status;
     while (!(*status & VIRTIO_CONFIG_S_DRIVER_OK));
 
-    // int size = 10;
-    // char message[size];
-
-    // for (i = 0; i < size; i++) {
-    //   message[i] = i;
-    // }
-    // char message[RPMSG_BUF_SIZE];
-    // = "qweqweqwe";
-
-
     // Initialize the RPMsg transport structure /
     pru_rpmsg_init(&transport, &resourceTable.rpmsg_vring0, &resourceTable.rpmsg_vring1, TO_ARM_HOST, FROM_ARM_HOST);
 
@@ -82,20 +72,45 @@ int main(void) {
     	while (1) {
         /* Check bit 30 of register R31 to see if the ARM has kicked us */
         if (__R31 & HOST_INT) {
-          /* Clear the event status */
-          CT_INTC.SICR_bit.STS_CLR_IDX = FROM_ARM_HOST;
-          /* Receive all available messages, multiple messages can be sent per kick */
-          while (pru_rpmsg_receive(&transport, &src, &dst, payload, &len) == PRU_RPMSG_SUCCESS) {
-            /* Echo the message back to the same address from which we just received */
-            // pru_rpmsg_send(&transport, dst, src, payload, len);
-                int i = 0;
-                for (i = 0; i < 255; i++) {
-                    payload[i] = 'A' + i;
+            /* Clear the event status */
+            CT_INTC.SICR_bit.STS_CLR_IDX = FROM_ARM_HOST;
+            /* Receive all available messages, multiple messages can be sent per kick */
+
+            while (pru_rpmsg_receive(&transport, &src, &dst, payload, &len) == PRU_RPMSG_SUCCESS) {
+                if (strcmp(payload, "STOP_SENDING") == 0) {
+                    // A message was received from Linux to stop sending messages
+                    break;
                 }
-            pru_rpmsg_send(&transport, dst, src, payload, strlen(payload) + 1);
-            // __delay_cycles(CYCLES_PER_SECOND * 10);
-            // pru_rpmsg_send(&transport, dst, src, message, sizeof(message) + 1);
-          }
+
+                int k = 0;
+                for (k = 0; k < 100000; k++) {
+                    int i, j = 0;
+                    int max = 490;
+                    for (i = 0; i < max; i++) {
+                        if (i % 50 == 0 && i != 0) {
+                            j++;
+                        }
+                        payload[i] = 'A' + j;
+                        __delay_cycles(1000); 
+
+                    }
+                    
+                    // Check for messages from Linux before sending a message
+                    while (pru_rpmsg_receive(&transport, &src, &dst, payload, &len) == PRU_RPMSG_SUCCESS) {
+                        if (strcmp(payload, "STOP_SENDING") == 0) {
+                            // A message was received from Linux to stop sending messages
+                            break;
+                        }
+                    }
+                    
+                    // If a stop message was received, break out of the sending loop
+                    if (strcmp(payload, "STOP_SENDING") == 0) {
+                        break;
+                    }
+
+                    pru_rpmsg_send(&transport, dst, src, payload, strlen(payload) + 1);
+                }
+            }
         }
       }
     

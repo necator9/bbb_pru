@@ -4,10 +4,11 @@
     {
         "label": "Copy Local to Remote",
         "type": "shell",
-        "command": "robocopy",
+        "command": "scp",
         "args": [
-            "${workspaceFolder}",
-            "root@192.168.1.199",
+            "-r",
+            "C:\\Users\\Ivan\\Repositories\\bbb_pru\\rpmsg\\pru",
+            "root@192.168.1.199:/root",
         ],
         "group": {
             "kind": "build",
@@ -20,7 +21,7 @@
         "command": "ssh",
         "args": [
           "root@192.168.1.199",
-          "cd /root/bbb_pru/rpmsg/pru/; source configure.sh; make"
+          "cd /root/pru/; source configure.sh; make;"
         ],
         "dependsOn": ["Copy Local to Remote"],
         "group": {
